@@ -1,0 +1,122 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-50: rgba(14, 165, 233, 0.1);
+  --color-primary-100: rgba(14, 165, 233, 0.2);
+  --color-primary-500: #0ea5e9;
+  --color-primary-600: #0284c7;
+  --color-primary-700: #0369a1;
+  --color-primary-900: #0c4a6e;
+  
+  --color-neon-blue: #00f0ff;
+  --color-neon-purple: #8a2be2;
+  --color-neon-cyan: #00ffff;
+  --color-neon-green: #00ff66;
+  --color-neon-red: #ff003c;
+  
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-slow: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-draw: draw 3s ease-out forwards;
+  --animate-slide-bg: slide-bg 20s linear infinite;
+  --animate-glow-pulse: glow-pulse 3s infinite alternate;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes slide-bg {
+  from { background-position: 0 0; }
+  to { background-position: 100px 100px; }
+}
+
+@keyframes glow-pulse {
+  0% { box-shadow: 0 0 5px rgba(0, 240, 255, 0.2); }
+  100% { box-shadow: 0 0 20px rgba(0, 240, 255, 0.6); }
+}
+
+@layer base {
+  body {
+    @apply bg-[#020817] text-slate-200 antialiased;
+  }
+  
+  input, select, textarea {
+    @apply bg-[#030B1C]/80 border border-cyan-900/40 text-slate-200 focus:outline-none focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500 shadow-[0_0_15px_rgba(0,255,255,0.05)];
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-[#030B1C]/80 backdrop-blur-xl border border-cyan-900/30 shadow-none;
+  }
+  .glass-card {
+    @apply bg-[#030B1C]/80 backdrop-blur-md border border-cyan-900/30 shadow-none;
+  }
+  .neon-border {
+    @apply border border-cyan-500/30 shadow-[0_0_10px_rgba(0,255,255,0.1)_inset,0_0_10px_rgba(0,255,255,0.1)];
+  }
+  .neon-border-hover:hover {
+    @apply border-cyan-400 shadow-[0_0_15px_rgba(0,255,255,0.3)_inset,0_0_15px_rgba(0,255,255,0.3)];
+  }
+  .neon-text-blue {
+    @apply text-[#00f0ff] drop-shadow-[0_0_8px_rgba(0,240,255,0.8)];
+  }
+  .neon-text-green {
+    @apply text-[#00ff66] drop-shadow-[0_0_8px_rgba(0,255,102,0.8)];
+  }
+  .neon-text-red {
+    @apply text-[#ff003c] drop-shadow-[0_0_8px_rgba(255,0,60,0.8)];
+  }
+  .neon-text-purple {
+    @apply text-[#8a2be2] drop-shadow-[0_0_8px_rgba(138,43,226,0.8)];
+  }
+  .neon-text-gold {
+    @apply text-[#ffd700] drop-shadow-[0_0_8px_rgba(255,215,0,0.8)];
+  }
+  .btn-fintech {
+    @apply bg-[#030B1C]/90 backdrop-blur-md border border-cyan-500/30 text-cyan-400 font-semibold rounded-lg shadow-[0_0_8px_rgba(0,255,255,0.05)_inset,0_0_8px_rgba(0,255,255,0.05)] transition-all duration-300 hover:-translate-y-0.5 hover:border-cyan-400 hover:text-cyan-200 hover:shadow-[0_0_12px_rgba(0,255,255,0.15)_inset,0_0_15px_rgba(0,255,255,0.2)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:border-cyan-500/30 disabled:hover:shadow-[0_0_8px_rgba(0,255,255,0.05)_inset,0_0_8px_rgba(0,255,255,0.05)];
+  }
+}
+
+/* Recharts Overrides for Terminal Theme */
+.recharts-cartesian-grid-horizontal line, 
+.recharts-cartesian-grid-vertical line {
+  stroke: rgba(0, 255, 255, 0.05) !important;
+}
+.recharts-text {
+  fill: #64748b !important;
+}
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  background-color: rgba(5, 11, 26, 0.9) !important;
+  border: 1px solid rgba(0, 255, 255, 0.3) !important;
+  border-radius: 8px !important;
+  backdrop-filter: blur(8px) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 10px rgba(0, 255, 255, 0.1) !important;
+}
+.recharts-tooltip-item {
+  color: #e2e8f0 !important;
+}
+
+/* Light Theme Implementation */
+html.light-theme {
+  filter: invert(1) hue-rotate(180deg);
+  background-color: #fdf7e8;
+}
+html.light-theme img,
+html.light-theme video {
+  filter: invert(1) hue-rotate(180deg);
+}
+html.light-theme body {
+  min-height: 100vh;
+}

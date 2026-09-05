@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-50: rgba(79, 70, 229, 0.1);
+  --color-primary-100: rgba(79, 70, 229, 0.2);
+  --color-primary-500: #6366f1;
+  --color-primary-600: #4f46e5;
+  --color-primary-700: #4338ca;
+  --color-primary-900: #312e81;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-950 text-slate-200;
+  }
+  
+  input, select, textarea {
+    @apply bg-slate-900/50 border border-indigo-900/50 text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.1)];
+  }
+}
