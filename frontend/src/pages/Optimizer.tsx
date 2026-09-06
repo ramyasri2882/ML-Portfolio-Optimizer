@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PieChart as RechartsPieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from 'recharts';
-import { Settings, Play, Loader2, ArrowRight, Download, BarChart3, Activity, ChevronDown, Save, Check } from 'lucide-react';
+import { Settings, Play, Loader2, ArrowRight, BarChart3, Activity, ChevronDown, Save, Check } from 'lucide-react';
 import { cn } from '../utils/cn';
 import { useUser } from '../App';
 

@@ -1,8 +1,6 @@
-import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, ScatterChart, Scatter, ZAxis } from 'recharts';
 import { RefreshCw, ArrowLeft, TrendingUp, TrendingDown, ShieldCheck } from 'lucide-react';
-import { cn } from '../utils/cn';
 import { useUser } from '../App';
 
 export default function Performance() {

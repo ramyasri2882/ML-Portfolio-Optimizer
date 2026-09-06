@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Database, ArrowRight, Cpu, Target, BrainCircuit, Activity, RefreshCw } from 'lucide-react';
 import { cn } from '../utils/cn';

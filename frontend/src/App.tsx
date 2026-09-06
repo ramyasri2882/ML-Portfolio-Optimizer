@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, TrendingUp, Cpu, PieChart, Activity, Award, Info, Search, Bell, User, Briefcase, Menu, X, Check, LogOut, Settings as SettingsIcon, Plus } from 'lucide-react';
+import { LayoutDashboard, TrendingUp, Cpu, PieChart, Activity, Award, Info, Search, Bell, User, Briefcase, Menu, Check, LogOut, Settings as SettingsIcon, Plus } from 'lucide-react';
 import { cn } from './utils/cn';
 import FinanceBackground from './components/FinanceBackground';
 
@@ -40,25 +40,7 @@ export interface UserProfile {
   notifications: any[];
 }
 
-const defaultUsers: UserProfile[] = [
-  { 
-    id: '1', 
-    name: 'Default Operator', 
-    email: 'operator@ai.portfolio', 
-    lastActivity: 'Active Now',
-    terminalName: 'SECURE_NODE_01',
-    accessLevel: 'ADMIN',
-    portfolios: [],
-    optimizerState: { amount: '10000', selectedStocks: [], riskPreference: 'moderate', objective: 'sharpe', resultsPortfolio: null },
-    settings: { theme: 'dark', notifications: true },
-    notifications: [
-      { id: 1, text: 'Portfolio optimization completed for Defensive Strategy.', read: false },
-      { id: 2, text: 'ML prediction updated for top 50 assets.', read: false },
-      { id: 3, text: 'Backtest completed: Strategy outperformed benchmark by 12%.', read: false },
-      { id: 4, text: 'Market data synchronized successfully.', read: true },
-    ]
-  },
-];
+
 
 interface UserContextType {
   users: UserProfile[];

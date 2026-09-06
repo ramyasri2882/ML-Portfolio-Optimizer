@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Calendar, Play, ArrowRight, ShieldCheck, ChevronDown } from 'lucide-react';
-import { cn } from '../utils/cn';
+
 import { useUser } from '../App';
 
 export default function Backtesting() {

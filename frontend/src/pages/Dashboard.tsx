@@ -98,7 +98,7 @@ export default function Dashboard() {
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {stocks.slice(0, 6).map((stock, idx) => (
+            {stocks.slice(0, 6).map((stock) => (
               <Link 
                 key={stock.symbol} 
                 to={`/stocks/${stock.symbol}`}
