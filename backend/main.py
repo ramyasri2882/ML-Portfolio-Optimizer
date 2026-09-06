@@ -42,7 +42,12 @@ def update_db_in_background():
                 
                 # Filter to strictly > start_date if latest exists
                 if latest:
-                    hist = hist[hist.index > pd.to_datetime(start_date)]
+                    # Make start_date tz-aware matching the dataframe's timezone, or Asia/Kolkata
+                    tz = hist.index.tz if hist.index.tz is not None else 'Asia/Kolkata'
+                    start_dt = pd.to_datetime(start_date).tz_localize(tz)
+                    if hist.index.tz is None:
+                        hist.index = hist.index.tz_localize(tz)
+                    hist = hist[hist.index > start_dt]
                 
                 if hist.empty:
                     continue
