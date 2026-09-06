@@ -85,7 +85,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/users');
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users`);
       if (res.ok) {
         const data = await res.json();
         const mappedUsers: UserProfile[] = data.map((u: any) => ({
@@ -143,7 +143,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
   const addUser = async (userData: Omit<UserProfile, 'id' | 'portfolios' | 'optimizerState' | 'settings' | 'notifications'>) => {
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/users', {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -175,7 +175,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         if (updates.settings.notifications !== undefined) payload.notifications_enabled = updates.settings.notifications;
       }
       
-      const res = await fetch(`http://127.0.0.1:8000/api/users/${currentUserId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/${currentUserId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -198,7 +198,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
   const savePortfolio = async (portfolio: any) => {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/users/${currentUserId}/portfolios`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/${currentUserId}/portfolios`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -222,7 +222,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
   const deletePortfolio = async (id: string) => {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/portfolios/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/portfolios/${id}`, {
         method: 'DELETE'
       });
       if (res.ok) {
@@ -239,7 +239,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     const allRead = newNotifs.every(n => n.read);
     if (allRead) {
       try {
-        await fetch(`http://127.0.0.1:8000/api/users/${currentUserId}/notifications/read_all`, {
+        await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/${currentUserId}/notifications/read_all`, {
           method: 'PUT'
         });
         await fetchUsers();
@@ -251,7 +251,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         const oldN = oldNotifs.find((on: any) => on.id === n.id);
         if (n.read && oldN && !oldN.read) {
           try {
-            await fetch(`http://127.0.0.1:8000/api/notifications/${n.id}/read`, { method: 'PUT' });
+            await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/notifications/${n.id}/read`, { method: 'PUT' });
           } catch(e) {}
         }
       }
@@ -453,7 +453,7 @@ function Header({ setMobileOpen }: { setMobileOpen: (o: boolean) => void }) {
   const switchUserRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/stocks')
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stocks`)
       .then(res => res.json())
       .then(data => setStocks(data))
       .catch(() => {});

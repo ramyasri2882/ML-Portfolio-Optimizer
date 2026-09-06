@@ -24,7 +24,7 @@ export default function StockAnalysis() {
 
   useEffect(() => {
     if (selectedCorrelationStocks.length >= 2) {
-      fetch('http://127.0.0.1:8000/api/correlation', {
+      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/correlation`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ symbols: selectedCorrelationStocks })
@@ -37,7 +37,7 @@ export default function StockAnalysis() {
   }, [selectedCorrelationStocks]);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/stocks')
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stocks`)
       .then(res => res.json())
       .then(data => {
         setStocks(data);
@@ -49,7 +49,7 @@ export default function StockAnalysis() {
 
   useEffect(() => {
     if (symbol) {
-      fetch(`http://127.0.0.1:8000/api/stocks/${symbol}/chart`)
+      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stocks/${symbol}/chart`)
         .then(res => res.json())
         .then(data => setChartData(data));
     }

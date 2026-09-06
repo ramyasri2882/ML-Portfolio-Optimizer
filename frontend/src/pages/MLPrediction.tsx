@@ -12,14 +12,14 @@ export default function MLPrediction() {
   const [isGenerating, setIsGenerating] = useState(false);
 
   const fetchPredictions = () => {
-    fetch(`http://127.0.0.1:8000/api/users/${currentUser.id}/ml-predictions`)
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/${currentUser.id}/ml-predictions`)
       .then(res => res.json())
       .then(data => {
         if (data && data.length > 0) {
           setPredictions(data);
         } else {
           // Fallback to global if none for user
-          fetch('http://127.0.0.1:8000/api/ml-predictions')
+          fetch(`${import.meta.env.VITE_API_BASE_URL}/api/ml-predictions`)
             .then(r => r.json())
             .then(d => setPredictions(d));
         }
@@ -33,7 +33,7 @@ export default function MLPrediction() {
   const handleGenerate = async () => {
     setIsGenerating(true);
     try {
-      await fetch(`http://127.0.0.1:8000/api/users/${currentUser.id}/ml-predictions`, {
+      await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/${currentUser.id}/ml-predictions`, {
         method: 'POST'
       });
       fetchPredictions();

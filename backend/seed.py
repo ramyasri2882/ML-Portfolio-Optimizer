@@ -29,10 +29,10 @@ def seed():
     db.query(model.HistoricalData).delete()
     db.query(model.Stock).delete()
     
-    print("Fetching historical data from yfinance (2016-2025)...")
+    print("Fetching historical data from yfinance (2016 to today)...")
     
     start_date = '2016-01-01'
-    end_date = '2025-12-31'
+    end_date = datetime.date.today().strftime('%Y-%m-%d')
     
     for s in STOCKS:
         print(f"Processing {s['symbol']}...")
@@ -82,7 +82,7 @@ def seed():
         db.commit()
         time.sleep(1) # sleep to avoid rate limiting
         
-    print("Database seeded successfully with 2016-2025 historical data!")
+    print("Database seeded successfully with historical data up to today!")
 
 if __name__ == '__main__':
     seed()

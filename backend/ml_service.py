@@ -35,7 +35,8 @@ def train_and_predict(db: Session):
             continue
             
         # Chronological split for training
-        train_df = df[df['date'] <= '2025-12-31']
+        import datetime
+        train_df = df[df['date'] <= datetime.date.today().strftime('%Y-%m-%d')]
         
         X = train_df[['price_lag1', 'return_lag1', 'volatility_lag1']]
         y = train_df['return_val']

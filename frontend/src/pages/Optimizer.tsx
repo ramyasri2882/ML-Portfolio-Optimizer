@@ -31,7 +31,7 @@ export default function Optimizer() {
   }, [currentUser.id]);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/stocks')
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stocks`)
       .then(res => res.json())
       .then(data => {
         setStocks(data);
@@ -81,7 +81,7 @@ export default function Optimizer() {
     setShowResults(false);
     setOptimizationError(null);
     
-    fetch('http://127.0.0.1:8000/api/portfolio-optimization', {
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/portfolio-optimization`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ symbols: selectedStocks })

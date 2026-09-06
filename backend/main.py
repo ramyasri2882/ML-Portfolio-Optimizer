@@ -14,6 +14,62 @@ live_price_cache = TTLCache(maxsize=100, ttl=300)
 
 app = FastAPI(title="ML Portfolio Backend API", description="API for stock analysis, ML predictions, and portfolio optimization")
 
+import threading
+import time
+import pandas as pd
+import numpy as np
+
+def update_db_in_background():
+    db = database.SessionLocal()
+    try:
+        stocks = db.query(model.Stock).all()
+        today_str = datetime.today().strftime('%Y-%m-%d')
+        for s in stocks:
+            # Check latest date
+            latest = db.query(model.HistoricalData).filter(model.HistoricalData.symbol == s.symbol).order_by(model.HistoricalData.date.desc()).first()
+            if not latest or latest.date < today_str:
+                start_date = latest.date if latest else '2016-01-01'
+                
+                # Fetch missing data
+                ticker = yf.Ticker(f"{s.symbol}.NS")
+                hist = ticker.history(start=start_date, end=today_str)
+                if hist.empty:
+                    continue
+                
+                hist['return_val'] = hist['Close'].pct_change() * 100
+                hist['volatility'] = hist['return_val'].rolling(window=20).std() * np.sqrt(252)
+                hist = hist.dropna()
+                
+                # Filter to strictly > start_date if latest exists
+                if latest:
+                    hist = hist[hist.index > pd.to_datetime(start_date)]
+                
+                if hist.empty:
+                    continue
+                    
+                hist_records = []
+                for index, row in hist.iterrows():
+                    hist_records.append(model.HistoricalData(
+                        symbol=s.symbol,
+                        date=index.strftime('%Y-%m-%d'),
+                        price=float(row['Close']),
+                        return_val=float(row['return_val']),
+                        volatility=float(row['volatility'])
+                    ))
+                if hist_records:
+                    db.bulk_save_objects(hist_records)
+                    db.commit()
+    except Exception as e:
+        print(f"Background update failed: {e}")
+    finally:
+        db.close()
+
+@app.on_event("startup")
+def startup_event():
+    thread = threading.Thread(target=update_db_in_background)
+    thread.start()
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000", "*"],
@@ -52,15 +108,31 @@ def get_stocks(db: Session = Depends(get_db)):
         
     try:
         if yf_symbols:
-            # Download latest day for all stocks
-            data = yf.download(yf_symbols, period="1d", group_by="ticker", progress=False)
+            # Download 1 year of data to calculate all metrics
+            data = yf.download(yf_symbols, period="1y", group_by="ticker", progress=False)
             for i, s in enumerate(stocks):
                 yf_sym = yf_symbols[i]
                 df = data[yf_sym] if len(yf_symbols) > 1 else data
                 if not df['Close'].empty:
                     current_price = float(df['Close'].iloc[-1])
-                    open_price = float(df['Open'].iloc[-1])
-                    daily_return = ((current_price - open_price) / open_price) * 100 if open_price else 0
+                    
+                    # Ensure we have enough data to calculate daily return
+                    if len(df) >= 2:
+                        prev_close = float(df['Close'].iloc[-2])
+                        daily_return = ((current_price - prev_close) / prev_close) * 100
+                    else:
+                        open_price = float(df['Open'].iloc[-1])
+                        daily_return = ((current_price - open_price) / open_price) * 100 if open_price else 0
+                    
+                    # 52 Week High/Low
+                    s.high52 = float(df['Close'].max())
+                    s.low52 = float(df['Close'].min())
+                    
+                    # Calculate Annual Return and Volatility dynamically
+                    df['return_val'] = df['Close'].pct_change() * 100
+                    if len(df['return_val'].dropna()) > 0:
+                        s.annualReturn = float(df['return_val'].mean() * 252)
+                        s.volatility = float(df['return_val'].std() * np.sqrt(252))
                     
                     s.price = current_price
                     s.dailyReturn = daily_return
@@ -90,7 +162,30 @@ def get_stock(symbol: str, db: Session = Depends(get_db)):
 
 @app.get("/api/stocks/{symbol}/chart", response_model=List[schemas.HistoricalDataResponse])
 def get_stock_chart(symbol: str, db: Session = Depends(get_db)):
-    # Get last 30 days
+    try:
+        import numpy as np
+        ticker = yf.Ticker(f"{symbol}.NS")
+        hist = ticker.history(period="3mo")
+        if not hist.empty:
+            hist['return_val'] = hist['Close'].pct_change() * 100
+            hist['volatility'] = hist['return_val'].rolling(window=20).std() * np.sqrt(252)
+            hist = hist.dropna()
+            hist = hist.tail(30)
+            
+            result = []
+            for index, row in hist.iterrows():
+                result.append({
+                    "symbol": symbol,
+                    "date": index.strftime('%Y-%m-%d'),
+                    "price": float(row['Close']),
+                    "return_val": float(row['return_val']),
+                    "volatility": float(row['volatility'])
+                })
+            return result
+    except Exception as e:
+        print(f"Live chart data fetch error for {symbol}: {e}")
+
+    # Fallback to database
     data = db.query(model.HistoricalData).filter(model.HistoricalData.symbol == symbol).order_by(model.HistoricalData.date.desc()).limit(30).all()
     # Return ascending
     return data[::-1]
@@ -417,7 +512,7 @@ def get_latest_market_data(symbol: str, db: Session = Depends(get_db)):
         "symbol": symbol,
         "currentPrice": stock.price,
         "dailyReturn": stock.dailyReturn,
-        "timestamp": "Last available data: 2025-12-31",
+        "timestamp": f"Last available data: {datetime.now().strftime('%Y-%m-%d')}",
         "isLive": False,
         "error": "Latest market data temporarily unavailable."
     }
